@@ -1,226 +1,165 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Futuristic Cybersecurity Timetable</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=Rubik&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --glass-bg: rgba(255, 255, 255, 0.08);
-      --border-glass: rgba(255, 255, 255, 0.2);
-      --main-glow: rgba(0, 255, 255, 0.5);
-      --text-glow: #00ffe7;
-      --font-header: 'Orbitron', sans-serif;
-      --font-body: 'Rubik', sans-serif;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      font-family: var(--font-body);
-      background: url('https://images.unsplash.com/photo-1504384308090-c894fdcc538d') no-repeat center center/cover;
-      color: #fff;
-      padding: 2rem;
-      backdrop-filter: blur(10px);
-    }
-
-    header {
-      text-align: center;
-      margin-bottom: 3rem;
-    }
-
-    header h1 {
-      font-family: var(--font-header);
-      font-size: 2.5rem;
-      color: var(--text-glow);
-      text-shadow: 0 0 8px var(--main-glow);
-    }
-
-    .glass-card {
-      background: var(--glass-bg);
-      border: 1px solid var(--border-glass);
-      border-radius: 1rem;
-      padding: 2rem;
-      margin-bottom: 2rem;
-      backdrop-filter: blur(16px);
-      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
-    }
-
-    .glass-card h2 {
-      font-family: var(--font-header);
-      font-size: 1.5rem;
-      color: var(--text-glow);
-      margin-bottom: 1rem;
-    }
-
-    ul {
-      list-style-type: none;
-    }
-
-    li {
-      margin-bottom: 1rem;
-    }
-
-    textarea {
-      width: 100%;
-      padding: 0.5rem;
-      margin-top: 0.5rem;
-      border-radius: 6px;
-    }
-
-    .task-upload {
-      margin-top: 10px;
-    }
-
-    button {
-      background: #00ffe7;
-      color: #000;
-      border: none;
-      padding: 8px 12px;
-      margin-top: 0.5rem;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    #popup {
-      display: none;
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background: #00ffe7;
-      color: #000;
-      padding: 10px 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px #00ffe7;
-      font-weight: bold;
-      z-index: 9999;
-    }
-
-    .progress-container {
-      margin-top: 2rem;
-    }
-
-    .progress-bar-bg {
-      width: 100%;
-      background: #333;
-      height: 20px;
-      border-radius: 10px;
-      overflow: hidden;
-    }
-
-    .progress-bar-fill {
-      height: 100%;
-      width: 0%;
-      background: #00ffe7;
-      transition: width 0.5s;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cyber‑Timetable Phase 2</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=Rubik&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<style>
+  :root {
+    --bg-dark: #0d1117; --bg-light: #f0f0f0;
+    --text-dark: #fff; --text-light: #111;
+    --accent: #00ffe7; --glass-bg-dark: rgba(255,255,255,0.05); --glass-bg-light: rgba(0,0,0,0.05);
+  }
+  [data-theme="dark"] { background: var(--bg-dark); color: var(--text-dark); }
+  [data-theme="light"] { background: var(--bg-light); color: var(--text-light); }
+  * { box-sizing: border-box; margin:0; padding:0; }
+  body { font-family: 'Rubik', sans-serif; transition: background .3s, color .3s; padding:1rem; }
+  header { text-align:center; margin-bottom:1rem; position:sticky; top:0; background:inherit; }
+  header h1 { font-family: 'Orbitron', sans-serif; font-size:2rem; color:var(--accent); }
+  nav { display:flex; flex-wrap:wrap; justify-content:center; gap:.5rem; margin-bottom:1rem; }
+  nav button { background:var(--accent); border:none; padding:.5rem 1rem; border-radius:5px; color:#000; cursor:pointer; }
+  .theme-switch { position:fixed; top:10px; right:10px; cursor:pointer; font-size:1.5rem; }
+  .glass-card {
+    background: var(--glass-bg-dark); border-radius:10px; margin:1rem auto; max-width:800px;
+    padding:1rem; backdrop-filter: blur(10px); box-shadow:0 4px 20px rgba(0,255,255,0.2);
+  }
+  [data-theme="light"] .glass-card { background: var(--glass-bg-light); }
+  .glass-card h2 { font-family: 'Orbitron', sans-serif; font-size:1.3rem; margin-bottom:.7rem; color:var(--accent); }
+  .task-upload { margin-top:.5rem; display:none; }
+  textarea { width:100%; min-height:80px; padding:.5rem; border-radius:5px; border:none; resize:vertical; }
+  input[type="file"] { margin-top:.5rem; }
+  button.save { background:var(--accent); border:none; padding:.5rem 1rem; border-radius:5px; cursor:pointer; display:inline-block; margin-top:.5rem;}
+  .progress-container { width:100%; max-width:800px; margin:1rem auto; }
+  .progress-bar-bg { background:#333; border-radius:10px; overflow:hidden;}
+  .progress-bar-fill { height:20px; width:0; background:var(--accent); transition:width .4s; }
+  .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; 
+           background:rgba(0,0,0,0.6); justify-content:center; align-items:center; }
+  .modal-content { background:inherit; padding:1rem 2rem; border-radius:10px; box-shadow:0 0 20px var(--accent); }
+  @media(max-width:600px){ header h1{font-size:1.5rem;} }
+  .login-btn { background:var(--accent); border:none; padding:.5rem 1rem; border-radius:5px; color:#000; cursor:pointer; }
+</style>
 </head>
-<body>
+<body data-theme="dark">
 
-  <header>
-    <h1>Cybersecurity Timetable (June - August 2025)</h1>
-  </header>
+<div class="theme-switch" onclick="toggleTheme()">🌓</div>
 
-  <div class="glass-card">
-    <h2>Week 5 (July 15–21)</h2>
-    <ul>
-      <li>
-        <input type="checkbox" class="task-checkbox" data-task-id="task-1"> Metasploit basics
-        <div class="task-upload" id="task-1-upload" style="display:none;">
-          <label>Paste work:</label>
-          <textarea></textarea><br>
-          <input type="file"><br>
-          <button onclick="submitTask('task-1')">Submit</button>
-        </div>
-      </li>
-      <li>
-        <input type="checkbox" class="task-checkbox" data-task-id="task-2"> Deploying web shells
-        <div class="task-upload" id="task-2-upload" style="display:none;">
-          <label>Paste work:</label>
-          <textarea></textarea><br>
-          <input type="file"><br>
-          <button onclick="submitTask('task-2')">Submit</button>
-        </div>
-      </li>
-    </ul>
-  </div>
+<header><h1>Cyber‑Timetable Phase 2</h1></header>
 
-  <div class="progress-container">
-    <label style="font-family: var(--font-header);">Progress</label>
-    <div class="progress-bar-bg">
-      <div class="progress-bar-fill" id="progress-bar"></div>
-    </div>
-  </div>
+<button id="login" class="login-btn">🔐 Login with GitHub</button>
+<div id="user" style="display:none; text-align:center; margin-bottom:1rem;"></div>
 
-  <div id="popup">Task Submitted!</div>
+<nav id="nav"></nav>
 
-  <script>
-    // Handle checkbox toggle
-    document.querySelectorAll('.task-checkbox').forEach(cb => {
-      cb.addEventListener('change', function () {
-        const taskId = this.dataset.taskId;
-        const upload = document.getElementById(`${taskId}-upload`);
-        if (this.checked) {
-          upload.style.display = 'block';
-        } else {
-          upload.style.display = 'none';
-          updateProgress();
-          localStorage.removeItem(taskId);
-        }
+<div class="progress-container">
+  <div class="progress-bar-bg"><div id="progress-bar" class="progress-bar-fill"></div></div>
+</div>
+
+<div id="content"></div>
+
+<div id="modal" class="modal">
+  <div class="modal-content"><p id="modal-msg"></p><button onclick="closeModal()">OK</button></div>
+</div>
+
+<script>
+  const weeks = {
+    1:['Setup lab + VMs','TryHackMe pre-security','Autopsy memory dumps'],
+    2:['Web hacking path','SQLi with DVWA','Volatility plugins'],
+    3:['Command injection','Apache log parsing'],
+    4:['Wireshark + PCAP','Replay attacks','OSINT'],
+    5:['Metasploit basics','Deploy web shells'],
+    6:['Build vulnerable app','Black/white box testing'],
+    7:['Forensics mock case','USB audit logs'],
+    8:['Blue Team labs','IDS with Suricata'],
+    9:['CTF detailed report','OSINT tools','Metadata extraction'],
+    10:['Mini SOC build','Rapid triage','IR documentation'],
+    11:['Final exploit + IR','Portfolio prep','Backup all']
+  };
+  const loginBtn = document.getElementById('login'),
+        userDiv = document.getElementById('user'),
+        nav = document.getElementById('nav'),
+        content = document.getElementById('content'),
+        modal = document.getElementById('modal'),
+        modalMsg = document.getElementById('modal-msg');
+  let loggedIn = false;
+
+  loginBtn.onclick = () => {
+    loginBtn.style.display='none';
+    userDiv.style.display='block';
+    userDiv.textContent = 'Logged in as 🔐 Student';
+    loggedIn = true;
+    init();
+  };
+
+  function init(){
+    for(const w in weeks){
+      const btn = document.createElement('button');
+      btn.textContent='Week '+ w;
+      btn.onclick = ()=>scrollTo('week'+w);
+      nav.appendChild(btn);
+      const sec = document.createElement('div');
+      sec.className='glass-card'; sec.id='week'+w;
+      sec.innerHTML = `<h2>Week ${w}</h2><ul>` +
+        weeks[w].map((t,i)=>`
+        <li>
+          <input type="checkbox" class="task-box" data-id="w${w}t${i}"> ${t}
+          <div class="task-upload" id="w${w}t${i}-upload">
+            <textarea placeholder="Paste your work..."></textarea><br>
+            <input type="file"><br>
+            <button class="save" onclick="saveTask('w${w}t${i}')">Save</button>
+          </div>
+        </li>`).join('') +
+      `</ul>`;
+      content.appendChild(sec);
+    }
+    attachLogic();
+    updateProgress();
+  }
+
+  function attachLogic(){
+    document.querySelectorAll('.task-box').forEach(cb=>{
+      const id = cb.dataset.id;
+      cb.checked = !!localStorage[id];
+      cb.addEventListener('change', ()=>{
+        document.getElementById(id+'-upload').style.display = cb.checked?'block':'none';
+        if(!cb.checked) localStorage.removeItem(id);
+        updateProgress();
       });
+      if(cb.checked) document.getElementById(id+'-upload').style.display='block';
     });
+  }
 
-    function submitTask(id) {
-      const textarea = document.querySelector(`#${id}-upload textarea`);
-      const value = textarea.value.trim();
-      if (!value) {
-        alert("Please paste your work.");
-        return;
-      }
+  function saveTask(id){
+    const ta=document.querySelector(`#${id}-upload textarea`);
+    if(!ta.value.trim()){ alert('Paste your work'); return; }
+    localStorage[id] = ta.value;
+    document.querySelector(`.task-box[data-id="${id}"]`).checked = true;
+    document.getElementById(id+'-upload').style.display='none';
+    showModal('Saved ✅ '+id);
+    updateProgress();
+  }
 
-      // Save task to localStorage
-      localStorage.setItem(id, value);
+  function updateProgress(){
+    const total = document.querySelectorAll('.task-box').length;
+    const done = document.querySelectorAll('.task-box:checked').length;
+    document.getElementById('progress-bar').style.width = Math.round(done/total*100)+'%';
+  }
 
-      // Mark checkbox as done
-      document.querySelector(`[data-task-id="${id}"]`).checked = true;
-      document.getElementById(`${id}-upload`).style.display = 'none';
+  function scrollTo(id){
+    document.getElementById(id).scrollIntoView({behavior:'smooth', block:'start'});
+  }
 
-      showPopup();
-      updateProgress();
-    }
+  function toggleTheme(){
+    const t = document.documentElement.getAttribute('data-theme');
+    document.documentElement.setAttribute('data-theme', t==='dark'?'light':'dark');
+  }
 
-    function showPopup() {
-      const popup = document.getElementById("popup");
-      popup.style.display = "block";
-      setTimeout(() => {
-        popup.style.display = "none";
-      }, 2000);
-    }
+  function showModal(msg){ modalMsg.textContent = msg; modal.style.display='flex'; }
+  function closeModal(){ modal.style.display='none'; }
 
-    function updateProgress() {
-      const checkboxes = document.querySelectorAll('.task-checkbox');
-      const total = checkboxes.length;
-      const completed = Array.from(checkboxes).filter(cb => cb.checked).length;
-      const percent = total ? Math.round((completed / total) * 100) : 0;
-      document.getElementById('progress-bar').style.width = percent + '%';
-    }
-
-    // Load from storage
-    window.onload = () => {
-      document.querySelectorAll('.task-checkbox').forEach(cb => {
-        const taskId = cb.dataset.taskId;
-        if (localStorage.getItem(taskId)) {
-          cb.checked = true;
-        }
-      });
-      updateProgress();
-    }
-  </script>
+  // Mobile load
+  document.documentElement.setAttribute('data-theme','dark');
+</script>
 </body>
 </html>
