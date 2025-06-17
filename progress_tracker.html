@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Futuristic Cybersecurity Timetable</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=Rubik&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --glass-bg: rgba(255, 255, 255, 0.08);
+      --border-glass: rgba(255, 255, 255, 0.2);
+      --main-glow: rgba(0, 255, 255, 0.5);
+      --text-glow: #00ffe7;
+      --font-header: 'Orbitron', sans-serif;
+      --font-body: 'Rubik', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: url('https://images.unsplash.com/photo-1504384308090-c894fdcc538d') no-repeat center center/cover;
+      color: #fff;
+      padding: 2rem;
+      backdrop-filter: blur(10px);
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    header h1 {
+      font-family: var(--font-header);
+      font-size: 2.5rem;
+      color: var(--text-glow);
+      text-shadow: 0 0 8px var(--main-glow);
+    }
+
+    .glass-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--border-glass);
+      border-radius: 1rem;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    .glass-card h2 {
+      font-family: var(--font-header);
+      font-size: 1.5rem;
+      color: var(--text-glow);
+      margin-bottom: 1rem;
+    }
+
+    ul {
+      list-style-type: none;
+    }
+
+    li {
+      margin-bottom: 1rem;
+    }
+
+    textarea {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.5rem;
+      border-radius: 6px;
+    }
+
+    .task-upload {
+      margin-top: 10px;
+    }
+
+    button {
+      background: #00ffe7;
+      color: #000;
+      border: none;
+      padding: 8px 12px;
+      margin-top: 0.5rem;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    #popup {
+      display: none;
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #00ffe7;
+      color: #000;
+      padding: 10px 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px #00ffe7;
+      font-weight: bold;
+      z-index: 9999;
+    }
+
+    .progress-container {
+      margin-top: 2rem;
+    }
+
+    .progress-bar-bg {
+      width: 100%;
+      background: #333;
+      height: 20px;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: #00ffe7;
+      transition: width 0.5s;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Cybersecurity Timetable (June - August 2025)</h1>
+  </header>
+
+  <div class="glass-card">
+    <h2>Week 5 (July 15–21)</h2>
+    <ul>
+      <li>
+        <input type="checkbox" class="task-checkbox" data-task-id="task-1"> Metasploit basics
+        <div class="task-upload" id="task-1-upload" style="display:none;">
+          <label>Paste work:</label>
+          <textarea></textarea><br>
+          <input type="file"><br>
+          <button onclick="submitTask('task-1')">Submit</button>
+        </div>
+      </li>
+      <li>
+        <input type="checkbox" class="task-checkbox" data-task-id="task-2"> Deploying web shells
+        <div class="task-upload" id="task-2-upload" style="display:none;">
+          <label>Paste work:</label>
+          <textarea></textarea><br>
+          <input type="file"><br>
+          <button onclick="submitTask('task-2')">Submit</button>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="progress-container">
+    <label style="font-family: var(--font-header);">Progress</label>
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" id="progress-bar"></div>
+    </div>
+  </div>
+
+  <div id="popup">Task Submitted!</div>
+
+  <script>
+    // Handle checkbox toggle
+    document.querySelectorAll('.task-checkbox').forEach(cb => {
+      cb.addEventListener('change', function () {
+        const taskId = this.dataset.taskId;
+        const upload = document.getElementById(`${taskId}-upload`);
+        if (this.checked) {
+          upload.style.display = 'block';
+        } else {
+          upload.style.display = 'none';
+          updateProgress();
+          localStorage.removeItem(taskId);
+        }
+      });
+    });
+
+    function submitTask(id) {
+      const textarea = document.querySelector(`#${id}-upload textarea`);
+      const value = textarea.value.trim();
+      if (!value) {
+        alert("Please paste your work.");
+        return;
+      }
+
+      // Save task to localStorage
+      localStorage.setItem(id, value);
+
+      // Mark checkbox as done
+      document.querySelector(`[data-task-id="${id}"]`).checked = true;
+      document.getElementById(`${id}-upload`).style.display = 'none';
+
+      showPopup();
+      updateProgress();
+    }
+
+    function showPopup() {
+      const popup = document.getElementById("popup");
+      popup.style.display = "block";
+      setTimeout(() => {
+        popup.style.display = "none";
+      }, 2000);
+    }
+
+    function updateProgress() {
+      const checkboxes = document.querySelectorAll('.task-checkbox');
+      const total = checkboxes.length;
+      const completed = Array.from(checkboxes).filter(cb => cb.checked).length;
+      const percent = total ? Math.round((completed / total) * 100) : 0;
+      document.getElementById('progress-bar').style.width = percent + '%';
+    }
+
+    // Load from storage
+    window.onload = () => {
+      document.querySelectorAll('.task-checkbox').forEach(cb => {
+        const taskId = cb.dataset.taskId;
+        if (localStorage.getItem(taskId)) {
+          cb.checked = true;
+        }
+      });
+      updateProgress();
+    }
+  </script>
+</body>
+</html>
